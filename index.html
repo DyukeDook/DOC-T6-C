@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>T-6C Raw Document Library</title>
+  <style>
+    :root {
+      --navy: #102f46;
+      --blue: #176b88;
+      --blue-soft: #eaf5f8;
+      --gold: #d7a449;
+      --ink: #173244;
+      --muted: #607887;
+      --line: #d9e5ea;
+      --paper: #ffffff;
+      --wash: #f3f7f9;
+      --shadow: 0 18px 48px rgba(18, 53, 72, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 90% 5%, rgba(215, 164, 73, 0.18), transparent 24rem),
+        linear-gradient(180deg, #eaf4f8 0, var(--wash) 32rem);
+      font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      padding: 72px 0 62px;
+      color: #fff;
+      background:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 42%),
+        linear-gradient(135deg, #0d2f47, #145f7c 70%, #23829c);
+      border-bottom: 5px solid var(--gold);
+    }
+
+    header::after {
+      position: absolute;
+      right: -120px;
+      bottom: -190px;
+      width: 440px;
+      height: 440px;
+      border: 70px solid rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 7px 13px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 0 0 16px;
+      font-size: clamp(36px, 7vw, 64px);
+      line-height: 1.12;
+    }
+
+    header p {
+      max-width: 720px;
+      margin: 0;
+      color: #d9edf4;
+      font-size: 18px;
+    }
+
+    main {
+      padding: 42px 0 72px;
+    }
+
+    .intro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .intro h2 {
+      margin: 0 0 5px;
+      color: var(--navy);
+      font-size: clamp(27px, 4vw, 38px);
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .count {
+      flex: 0 0 auto;
+      padding: 9px 14px;
+      border: 1px solid #c8dce4;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .document {
+      display: flex;
+      min-height: 280px;
+      flex-direction: column;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--accent, var(--blue));
+      border-radius: 20px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .document:hover {
+      transform: translateY(-4px);
+      border-color: #b9d2dc;
+      box-shadow: 0 24px 54px rgba(18, 53, 72, 0.15);
+    }
+
+    .document.phase {
+      --accent: #267c99;
+    }
+
+    .document.syllabus {
+      --accent: #ba4f65;
+    }
+
+    .document.sop {
+      --accent: #a46a25;
+    }
+
+    .document.aetc {
+      --accent: #426d5b;
+    }
+
+    .document.flight {
+      --accent: #76558a;
+    }
+
+    .label {
+      align-self: flex-start;
+      margin-bottom: 18px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 10%, white);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .document h3 {
+      margin: 0 0 9px;
+      color: var(--navy);
+      font-size: 26px;
+      line-height: 1.3;
+    }
+
+    .filename {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: auto 0 20px;
+    }
+
+    .meta span {
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #526b79;
+      background: #f8fafb;
+      font-size: 13px;
+    }
+
+    .open-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 12px;
+      color: #fff;
+      background: var(--accent);
+      font-weight: 800;
+      text-decoration: none;
+      transition: filter 160ms ease;
+    }
+
+    .open-button:hover {
+      filter: brightness(1.08);
+    }
+
+    .open-button:focus-visible {
+      outline: 4px solid rgba(23, 107, 136, 0.24);
+      outline-offset: 3px;
+    }
+
+    .arrow {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .notice {
+      margin-top: 26px;
+      padding: 20px 22px;
+      border: 1px solid #ead7ae;
+      border-radius: 16px;
+      color: #634b20;
+      background: #fff9eb;
+    }
+
+    .notice strong {
+      color: #4c3816;
+    }
+
+    .node-library {
+      margin-top: 52px;
+    }
+
+    .node-library-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .node-library-heading h2 {
+      margin: 0 0 5px;
+      color: var(--navy);
+      font-size: clamp(27px, 4vw, 38px);
+    }
+
+    .node-library-heading p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .node-map-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    .node-map {
+      --map-accent: var(--blue);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+
+    .node-map.phase-map {
+      --map-accent: #267c99;
+    }
+
+    .node-map.sop-map {
+      --map-accent: #a46a25;
+    }
+
+    .node-map.aetc-map {
+      --map-accent: #426d5b;
+    }
+
+    .node-map.flight-map {
+      --map-accent: #76558a;
+    }
+
+    .node-map.syllabus-map {
+      --map-accent: #ba4f65;
+    }
+
+    .node-map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 26px;
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--map-accent) 10%, white), white 55%);
+    }
+
+    .node-map-header h3 {
+      margin: 0 0 3px;
+      color: var(--navy);
+      font-size: 24px;
+    }
+
+    .node-map-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .node-map-count {
+      flex: 0 0 auto;
+      padding: 6px 11px;
+      border: 1px solid color-mix(in srgb, var(--map-accent) 28%, white);
+      border-radius: 999px;
+      color: var(--map-accent);
+      background: #fff;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .node-canvas-scroll {
+      overflow-x: auto;
+      padding: 16px;
+      background:
+        radial-gradient(circle at center, color-mix(in srgb, var(--map-accent) 8%, white), transparent 18rem),
+        linear-gradient(rgba(16, 47, 70, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 47, 70, 0.025) 1px, transparent 1px),
+        #fbfdfe;
+      background-size: auto, 32px 32px, 32px 32px, auto;
+    }
+
+    .node-canvas {
+      position: relative;
+      width: 1080px;
+      height: 700px;
+      margin: 0 auto;
+    }
+
+    .aetc-map .node-canvas {
+      width: 1240px;
+      height: 800px;
+    }
+
+    .node-lines {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .node-line {
+      stroke: color-mix(in srgb, var(--map-accent) 38%, #ccd9df);
+      stroke-width: 1.35;
+    }
+
+    .node-center {
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      top: 330px;
+      display: flex;
+      width: 154px;
+      height: 154px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      padding: 20px;
+      border: 7px solid color-mix(in srgb, var(--map-accent) 18%, white);
+      border-radius: 50%;
+      color: #fff;
+      background:
+        radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.2), transparent 35%),
+        var(--map-accent);
+      box-shadow: 0 16px 30px color-mix(in srgb, var(--map-accent) 28%, transparent);
+      text-align: center;
+      text-decoration: none;
+      transform: translate(-50%, -50%);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .node-center:hover {
+      transform: translate(-50%, -50%) scale(1.045);
+      box-shadow: 0 20px 38px color-mix(in srgb, var(--map-accent) 38%, transparent);
+    }
+
+    .aetc-map .node-center {
+      top: 380px;
+    }
+
+    .node-center strong {
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .node-center span {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .topic-node {
+      position: absolute;
+      z-index: 2;
+      display: block;
+      width: 184px;
+      color: var(--ink);
+      text-align: center;
+      text-decoration: none;
+      transform: translate(-50%, -9px);
+    }
+
+    .topic-node.inner-node {
+      width: 142px;
+    }
+
+    .topic-node.inner-node .node-label {
+      min-height: 0;
+      padding: 8px;
+    }
+
+    .topic-node.inner-node .node-title {
+      display: none;
+    }
+
+    .node-dot {
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 0 auto 7px;
+      border: 4px solid #fff;
+      border-radius: 50%;
+      background: var(--map-accent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--map-accent) 30%, #c7d6dc);
+      transition: transform 160ms ease;
+    }
+
+    .node-label {
+      display: block;
+      min-height: 56px;
+      padding: 9px 10px;
+      border: 1px solid color-mix(in srgb, var(--map-accent) 20%, #dce6ea);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 18px rgba(18, 53, 72, 0.08);
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    .node-code {
+      display: block;
+      color: var(--map-accent);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.025em;
+      line-height: 1.2;
+    }
+
+    .node-title {
+      display: block;
+      margin-top: 3px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .node-page {
+      display: inline-block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .topic-node:hover .node-dot,
+    .topic-node:focus-visible .node-dot {
+      transform: scale(1.3);
+    }
+
+    .topic-node:hover .node-label,
+    .topic-node:focus-visible .node-label {
+      border-color: var(--map-accent);
+      box-shadow: 0 12px 24px color-mix(in srgb, var(--map-accent) 18%, transparent);
+      transform: translateY(-2px);
+    }
+
+    .topic-node:focus-visible,
+    .node-center:focus-visible {
+      outline: 4px solid color-mix(in srgb, var(--map-accent) 25%, transparent);
+      outline-offset: 4px;
+    }
+
+    footer {
+      padding: 0 0 38px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      header {
+        padding: 52px 0 46px;
+      }
+
+      .intro {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .document {
+        min-height: 0;
+      }
+
+      .node-library-heading,
+      .node-map-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .node-map-header {
+        gap: 10px;
+        padding: 19px 18px;
+      }
+
+      .node-canvas-scroll {
+        padding: 10px 0;
+      }
+
+      .node-canvas {
+        margin-left: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .document,
+      .open-button,
+      .node-center,
+      .node-dot,
+      .node-label {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <div class="eyebrow">T-6C DOCUMENT CENTER</div>
+      <h1>คลังเอกสารต้นฉบับ</h1>
+      <p>เลือกหัวข้อด้านล่างเพื่อเปิดไฟล์ PDF ต้นฉบับโดยตรงในแท็บใหม่</p>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="intro">
+      <div>
+        <h2>เอกสารหลัก</h2>
+        <p>ลิงก์ทั้งหมดอ้างอิงไฟล์ภายในโฟลเดอร์นี้โดยตรง</p>
+      </div>
+      <div class="count">5 PDF FILES</div>
+    </div>
+
+    <section class="grid" aria-label="รายการเอกสาร PDF">
+      <article class="document phase">
+        <span class="label">Training</span>
+        <h3>Phase Manual</h3>
+        <p class="filename">Phase Manual T-6C Revised MAY 2026 2.pdf</p>
+        <div class="meta">
+          <span>Revised May 2026</span>
+          <span>23.7 MB</span>
+        </div>
+        <a class="open-button" href="Phase%20Manual/Phase%20Manual%20T-6C%20Revised%20MAY%202026%202.pdf" target="_blank" rel="noopener">
+          <span>เปิด PDF ต้นฉบับ</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+
+      <article class="document syllabus">
+        <span class="label">Course</span>
+        <h3>Syllabus บ.ฝ.22</h3>
+        <p class="filename">Syllabus บ.ฝ.22.pdf</p>
+        <div class="meta">
+          <span>Training Syllabus</span>
+          <span>5.4 MB</span>
+        </div>
+        <a class="open-button" href="Syllabus/Syllabus%20%E0%B8%9A.%E0%B8%9D.22.pdf" target="_blank" rel="noopener">
+          <span>เปิด PDF ต้นฉบับ</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+
+      <article class="document sop">
+        <span class="label">Operations</span>
+        <h3>Standard Operating Procedures</h3>
+        <p class="filename">SOP T-6C Update 1 May 2026.pdf</p>
+        <div class="meta">
+          <span>Update 1 May 2026</span>
+          <span>16.6 MB</span>
+        </div>
+        <a class="open-button" href="SOP/SOP%20%20T-6C%20Update%201%20May%202026.pdf" target="_blank" rel="noopener">
+          <span>เปิด PDF ต้นฉบับ</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+
+      <article class="document aetc">
+        <span class="label">Regulation</span>
+        <h3>AETCMAN 11-248</h3>
+        <p class="filename">aetcman 11-248 Aug 2025.pdf</p>
+        <div class="meta">
+          <span>August 2025</span>
+          <span>5.0 MB</span>
+        </div>
+        <a class="open-button" href="aetcman%2011-248/aetcman%2011-248%20Aug%202025.pdf" target="_blank" rel="noopener">
+          <span>เปิด PDF ต้นฉบับ</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+
+      <article class="document flight">
+        <span class="label">Aircraft</span>
+        <h3>Flight Manual</h3>
+        <p class="filename">Flight Manual.pdf</p>
+        <div class="meta">
+          <span>T-6C Aircraft</span>
+          <span>26.0 MB</span>
+        </div>
+        <a class="open-button" href="Flight%20Manual/Flight%20Manual.pdf" target="_blank" rel="noopener">
+          <span>เปิด PDF ต้นฉบับ</span>
+          <span class="arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </article>
+    </section>
+
+    <section class="node-library" aria-labelledby="node-library-title">
+      <div class="node-library-heading">
+        <div>
+          <h2 id="node-library-title">แผนผังหัวข้อเอกสาร</h2>
+          <p>แผนผังแต่ละชุดแยกจากกัน กด node เพื่อเปิดไฟล์ PDF ตรงหน้าที่หัวข้อนั้นเริ่มต้น บนมือถือสามารถเลื่อนแผนผังซ้าย-ขวาได้</p>
+        </div>
+        <div class="count">54 LINKED NODES</div>
+      </div>
+
+      <div class="node-map-list">
+        <article class="node-map phase-map">
+          <header class="node-map-header">
+            <div>
+              <h3>Phase Manual</h3>
+              <p>Chapter 1-11</p>
+            </div>
+            <span class="node-map-count">11 NODES</span>
+          </header>
+          <div class="node-canvas-scroll">
+            <div class="node-canvas" data-node-map="phase" aria-label="แผนผัง Chapter ของ Phase Manual">
+              <svg class="node-lines" viewBox="0 0 1080 700" aria-hidden="true"></svg>
+              <a class="node-center" href="Phase%20Manual/Phase%20Manual%20T-6C%20Revised%20MAY%202026%202.pdf" target="_blank" rel="noopener">
+                <strong>Phase Manual</strong>
+                <span>เปิดไฟล์หลัก</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="node-map sop-map">
+          <header class="node-map-header">
+            <div>
+              <h3>Standard Operating Procedures</h3>
+              <p>หัวข้อคำสั่งการบินหลัก</p>
+            </div>
+            <span class="node-map-count">10 NODES</span>
+          </header>
+          <div class="node-canvas-scroll">
+            <div class="node-canvas" data-node-map="sop" aria-label="แผนผังหัวข้อหลักของ SOP">
+              <svg class="node-lines" viewBox="0 0 1080 700" aria-hidden="true"></svg>
+              <a class="node-center" href="SOP/SOP%20%20T-6C%20Update%201%20May%202026.pdf" target="_blank" rel="noopener">
+                <strong>SOP T-6C</strong>
+                <span>เปิดไฟล์หลัก</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="node-map aetc-map">
+          <header class="node-map-header">
+            <div>
+              <h3>AETCMAN 11-248</h3>
+              <p>Chapter 1-10 และ Attachment 1-6</p>
+            </div>
+            <span class="node-map-count">16 NODES</span>
+          </header>
+          <div class="node-canvas-scroll">
+            <div class="node-canvas" data-node-map="aetc" aria-label="แผนผัง Chapter และ Attachment ของ AETCMAN 11-248">
+              <svg class="node-lines" viewBox="0 0 1240 800" aria-hidden="true"></svg>
+              <a class="node-center" href="aetcman%2011-248/aetcman%2011-248%20Aug%202025.pdf" target="_blank" rel="noopener">
+                <strong>AETCMAN<br>11-248</strong>
+                <span>เปิดไฟล์หลัก</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="node-map flight-map">
+          <header class="node-map-header">
+            <div>
+              <h3>Flight Manual</h3>
+              <p>รายการหลักตาม Table of Contents</p>
+            </div>
+            <span class="node-map-count">10 NODES</span>
+          </header>
+          <div class="node-canvas-scroll">
+            <div class="node-canvas" data-node-map="flight" aria-label="แผนผัง Table of Contents ของ Flight Manual">
+              <svg class="node-lines" viewBox="0 0 1080 700" aria-hidden="true"></svg>
+              <a class="node-center" href="Flight%20Manual/Flight%20Manual.pdf" target="_blank" rel="noopener">
+                <strong>Flight Manual</strong>
+                <span>เปิดไฟล์หลัก</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="node-map syllabus-map">
+          <header class="node-map-header">
+            <div>
+              <h3>Syllabus บ.ฝ.22</h3>
+              <p>Blocks of Learning</p>
+            </div>
+            <span class="node-map-count">7 NODES</span>
+          </header>
+          <div class="node-canvas-scroll">
+            <div class="node-canvas" data-node-map="syllabus" aria-label="แผนผัง Blocks of Learning ของ Syllabus บ.ฝ.22">
+              <svg class="node-lines" viewBox="0 0 1080 700" aria-hidden="true"></svg>
+              <a class="node-center" href="Syllabus/Syllabus%20%E0%B8%9A.%E0%B8%9D.22.pdf" target="_blank" rel="noopener">
+                <strong>Syllabus<br>บ.ฝ.22</strong>
+                <span>เปิดไฟล์หลัก</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <aside class="notice">
+      <strong>หมายเหตุ:</strong> หน้านี้เป็นสารบัญสำหรับเปิดเอกสารต้นฉบับเท่านั้น
+      ไม่ได้แก้ไขหรือคัดลอกเนื้อหาจาก PDF และไม่แทนเอกสารควบคุมฉบับปัจจุบัน
+    </aside>
+  </main>
+
+  <footer class="shell">
+    Aviation Document Team &middot; Raw Document Library
+  </footer>
+
+  <script>
+    const pdfFiles = {
+      phase: "Phase%20Manual/Phase%20Manual%20T-6C%20Revised%20MAY%202026%202.pdf",
+      sop: "SOP/SOP%20%20T-6C%20Update%201%20May%202026.pdf",
+      aetc: "aetcman%2011-248/aetcman%2011-248%20Aug%202025.pdf",
+      flight: "Flight%20Manual/Flight%20Manual.pdf",
+      syllabus: "Syllabus/Syllabus%20%E0%B8%9A.%E0%B8%9D.22.pdf"
+    };
+
+    const nodeMaps = {
+      phase: [
+        { code: "Chapter 1", title: "General Information", page: 11 },
+        { code: "Chapter 2", title: "T-6C Flight Principles", page: 29 },
+        { code: "Chapter 3", title: "Ground Operation", page: 39 },
+        { code: "Chapter 4", title: "Flight Operations", page: 64 },
+        { code: "Chapter 5", title: "Traffic Patterns", page: 76 },
+        { code: "Chapter 6", title: "Contact", page: 98 },
+        { code: "Chapter 7", title: "Instrument Flying", page: 146 },
+        { code: "Chapter 8", title: "Navigation", page: 176 },
+        { code: "Chapter 9", title: "Formation", page: 202 },
+        { code: "Chapter 10", title: "Tactical Formation", page: 304 },
+        { code: "Chapter 11", title: "Night Flying", page: 348 }
+      ],
+      sop: [
+        { code: "SQN. ORDER", title: "คำสั่งฝูงฝึกขั้นปลายฯ", page: 8 },
+        { code: "GEN", title: "การบินทั่วไป", page: 31 },
+        { code: "PLAN", title: "การวางแผนการบิน", page: 80 },
+        { code: "CONT", title: "การบินเกาะภูมิประเทศ", page: 93 },
+        { code: "INST", title: "การบินด้วยเครื่องวัดประกอบการบิน", page: 95 },
+        { code: "FORM", title: "การบินหมู่", page: 103 },
+        { code: "NAV", title: "การบินเดินทาง", page: 118 },
+        { code: "NIGHT", title: "การบินกลางคืน", page: 125 },
+        { code: "TAC", title: "การบินหมู่ทางยุทธวิธี", page: 135 },
+        { code: "EMER", title: "การปฏิบัติการบินเมื่อเกิดเหตุฉุกเฉิน", page: 139 }
+      ],
+      aetc: [
+        { code: "Chapter 1", title: "General Information", page: 14 },
+        { code: "Chapter 2", title: "Basic T-6 Flight Principles", page: 33 },
+        { code: "Chapter 3", title: "Ground Operations", page: 46 },
+        { code: "Chapter 4", title: "Takeoff, Climb, and Level Off", page: 52 },
+        { code: "Chapter 5", title: "Traffic Patterns and Landings", page: 59 },
+        { code: "Chapter 6", title: "Contact", page: 96 },
+        { code: "Chapter 7", title: "Instrument Flying", page: 127 },
+        { code: "Chapter 8", title: "Navigation", page: 152 },
+        { code: "Chapter 9", title: "Two-Ship Formation", page: 168 },
+        { code: "Chapter 10", title: "Night Flying", page: 232 },
+        { code: "Attachment 1", title: "Glossary and References", page: 235, ring: "inner" },
+        { code: "Attachment 2", title: "Three- and Four-Ship Formations", page: 243, ring: "inner" },
+        { code: "Attachment 3", title: "Tactical Formation Procedures", page: 259, ring: "inner" },
+        { code: "Attachment 4", title: "AHC Program", page: 283, ring: "inner" },
+        { code: "Attachment 5", title: "AETC Standard Callouts", page: 296, ring: "inner" },
+        { code: "Attachment 6", title: "Rear Cockpit Differences", page: 298, ring: "inner" }
+      ],
+      flight: [
+        { code: "Section I", title: "Description and Operation", page: 9 },
+        { code: "Section II", title: "Normal Procedures", page: 189 },
+        { code: "Section III", title: "Emergency Procedures", page: 223 },
+        { code: "Section IV", title: "Crew Duties", page: 283 },
+        { code: "Section V", title: "Limitations", page: 285 },
+        { code: "Section VI", title: "Flight Characteristics", page: 299 },
+        { code: "Section VII", title: "Adverse Weather", page: 313 },
+        { code: "Appendix A", title: "Performance Data", page: 321 },
+        { code: "Glossary", title: "Terminology and Abbreviations", page: 465 },
+        { code: "Index", title: "Subject Index", page: 473 }
+      ],
+      syllabus: [
+        { code: "Block 1", title: "การบินเปลี่ยนแบบและปล่อยเดี่ยว (Transition / Solo Contact)", page: 2 },
+        { code: "Block 2", title: "การบินด้วยเครื่องวัดประกอบการบินขั้นพื้นฐาน (Basic Instrument)", page: 14 },
+        { code: "Block 3", title: "การบินเกาะภูมิประเทศขั้นก้าวหน้า (Advance Contact)", page: 21 },
+        { code: "Block 4", title: "การบินด้วยเครื่องวัดประกอบการบินขั้นก้าวหน้า (Advance Instrument)", page: 30 },
+        { code: "Block 5", title: "การบินเดินทาง (Navigation)", page: 38 },
+        { code: "Block 6", title: "การบินหมู่ (Formation)", page: 58 },
+        { code: "Block 7", title: "การบินยุทธวิธีขั้นพื้นฐาน (Basic Tactical)", page: 67 }
+      ]
+    };
+
+    const graph = {
+      centerX: 540,
+      centerY: 330,
+      outerX: 425,
+      outerY: 245,
+      innerX: 245,
+      innerY: 210
+    };
+
+    const graphOverrides = {
+      aetc: {
+        centerX: 620,
+        centerY: 380,
+        outerX: 500,
+        outerY: 300,
+        innerX: 260,
+        innerY: 190
+      }
+    };
+
+    function positionRing(nodes, radiusX, radiusY, centerX, centerY, startAngle = -90) {
+      nodes.forEach((node, index) => {
+        const angle = (startAngle + (360 / nodes.length) * index) * Math.PI / 180;
+        node.x = centerX + Math.cos(angle) * radiusX;
+        node.y = centerY + Math.sin(angle) * radiusY;
+      });
+    }
+
+    function renderNodeMap(canvas) {
+      const mapName = canvas.dataset.nodeMap;
+      const nodes = nodeMaps[mapName].map((node) => ({ ...node }));
+      const outerNodes = nodes.filter((node) => node.ring !== "inner");
+      const innerNodes = nodes.filter((node) => node.ring === "inner");
+      const svg = canvas.querySelector(".node-lines");
+      const mapGraph = { ...graph, ...(graphOverrides[mapName] || {}) };
+
+      positionRing(
+        outerNodes,
+        mapGraph.outerX,
+        mapGraph.outerY,
+        mapGraph.centerX,
+        mapGraph.centerY
+      );
+      if (innerNodes.length) {
+        positionRing(
+          innerNodes,
+          mapGraph.innerX,
+          mapGraph.innerY,
+          mapGraph.centerX,
+          mapGraph.centerY,
+          0
+        );
+      }
+
+      nodes.forEach((node) => {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("class", "node-line");
+        line.setAttribute("x1", mapGraph.centerX);
+        line.setAttribute("y1", mapGraph.centerY);
+        line.setAttribute("x2", node.x);
+        line.setAttribute("y2", node.y);
+        svg.appendChild(line);
+
+        const link = document.createElement("a");
+        link.className = node.ring === "inner" ? "topic-node inner-node" : "topic-node";
+        link.href = `${pdfFiles[mapName]}#page=${node.page}`;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.style.left = `${node.x}px`;
+        link.style.top = `${node.y}px`;
+        link.setAttribute("aria-label", `${node.code} ${node.title}, PDF หน้า ${node.page}`);
+        link.innerHTML = `
+          <span class="node-dot" aria-hidden="true"></span>
+          <span class="node-label">
+            <span class="node-code">${node.code}</span>
+            <span class="node-title">${node.title}</span>
+            <span class="node-page">PDF PAGE ${node.page}</span>
+          </span>
+        `;
+        canvas.appendChild(link);
+      });
+
+      requestAnimationFrame(() => {
+        const scroller = canvas.parentElement;
+        scroller.scrollLeft = Math.max(0, (canvas.offsetWidth - scroller.clientWidth) / 2);
+      });
+    }
+
+    document.querySelectorAll("[data-node-map]").forEach(renderNodeMap);
+  </script>
+</body>
+</html>
